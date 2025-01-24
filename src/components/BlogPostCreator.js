@@ -4,7 +4,7 @@ import * as Yup from "yup"
 import ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
 import { useBlogContext } from "../services/BlogProvider"
-import ImageUploader from "../components/ImageUploader"
+import ImageUploader from "./ImageUploader"
 
 const CreateArticleSchema = Yup.object().shape({
   title: Yup.string().required("Veuillez entrer le titre de votre article"),
@@ -24,6 +24,7 @@ const BlogPostCreator = () => {
     setCurrentSectionIndex,
     sections,
     setSections,
+    setMetadata,
   } = useBlogContext()
 
   const generateSlugFromTitle = useCallback(title => {
@@ -33,6 +34,23 @@ const BlogPostCreator = () => {
       .replace(/\s+/g, "-")
       .trim()
   }, [])
+
+  const syncMetadata = useCallback(
+    values => {
+      setMetadata({
+        title: values.title,
+        author: values.author,
+        date: values.date,
+        category: values.category,
+        slug: values.slug,
+        image: imageTitleData || "", // Image du titre
+        cardImage: "", // Ajoutez la logique pour gérer la "cardImage"
+        resume: values.resume,
+        sections: sections,
+      })
+    },
+    [imageTitleData, setMetadata]
+  )
 
   const createNewSection = setFieldValue => {
     if (sections.length >= 4) {
@@ -62,6 +80,7 @@ const BlogPostCreator = () => {
 
   const save = async values => {
     try {
+      syncMetadata(values) // Synchronisation avec `metadata`
       const result = await saveArticle(values, imagesData, imageTitleData)
       console.log(result.message)
     } catch (error) {
@@ -96,7 +115,13 @@ const BlogPostCreator = () => {
                 className="form-input"
                 onChange={e => {
                   setFieldValue("title", e.target.value)
-                  setFieldValue("slug", generateSlugFromTitle(e.target.value))
+                  const newSlug = generateSlugFromTitle(e.target.value)
+                  setFieldValue("slug", newSlug)
+                  syncMetadata({
+                    ...values,
+                    title: e.target.value,
+                    slug: newSlug,
+                  })
                 }}
               />
               <ErrorMessage
@@ -110,6 +135,10 @@ const BlogPostCreator = () => {
                 name="author"
                 placeholder="Auteur"
                 className="form-input"
+                onChange={e => {
+                  setFieldValue("author", e.target.value)
+                  syncMetadata({ ...values, author: e.target.value })
+                }}
               />
               <ErrorMessage
                 name="author"
@@ -117,13 +146,21 @@ const BlogPostCreator = () => {
                 className="error-message"
               />
 
-              <Field type="date" name="date" className="form-input" />
+              <Field
+                type="date"
+                name="date"
+                className="form-input"
+                onChange={e => {
+                  setFieldValue("date", e.target.value)
+                  syncMetadata({ ...values, date: e.target.value })
+                }}
+              />
               <ErrorMessage
                 name="date"
                 component="div"
                 className="error-message"
               />
-              {/* Module pour l'image du titre */}
+
               <div className="title-uploader">
                 <h2>Image du titre</h2>
                 <ImageUploader
@@ -133,7 +170,16 @@ const BlogPostCreator = () => {
                   setSections={() => {}}
                 />
               </div>
-              <Field as="select" name="category" className="form-input">
+
+              <Field
+                as="select"
+                name="category"
+                className="form-input"
+                onChange={e => {
+                  setFieldValue("category", e.target.value)
+                  syncMetadata({ ...values, category: e.target.value })
+                }}
+              >
                 <option value="">Sélectionnez une catégorie</option>
                 <option value="Events">Events</option>
                 <option value="Application">Application</option>
@@ -164,7 +210,10 @@ const BlogPostCreator = () => {
             <ReactQuill
               theme="snow"
               value={values.resume}
-              onChange={value => setFieldValue("resume", value)}
+              onChange={value => {
+                setFieldValue("resume", value)
+                syncMetadata({ ...values, resume: value })
+              }}
               className="react-quill"
             />
             <ErrorMessage
@@ -185,6 +234,7 @@ const BlogPostCreator = () => {
                   }
                   setSections(updatedSections)
                   setFieldValue("sections", updatedSections)
+                  syncMetadata({ ...values, sections: updatedSections })
                 }}
                 className="react-quill"
               />

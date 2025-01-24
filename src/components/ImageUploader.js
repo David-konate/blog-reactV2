@@ -11,7 +11,12 @@ const ImageUploader = ({
   const [loadingSection, setLoadingSection] = useState(false)
 
   // Accès au contexte global
-  const { setImageTitleData, setImagesData } = useBlogContext()
+  const {
+    setImageTitleData,
+    setImagesData,
+    setImagePreview,
+    setImageTitlePreview,
+  } = useBlogContext()
 
   // Fonction pour uploader une image de titre
   const handleTitleImageUpload = async event => {
@@ -28,6 +33,7 @@ const ImageUploader = ({
           url: URL.createObjectURL(uploadedFile), // Remplacer par la réponse API
         }
         setImageTitleData(imageData) // Mettre à jour les données globales
+        setImageTitlePreview(imageData.url) // Mise à jour de l'aperçu de l'image de titre dans le contexte global
       } catch (error) {
         console.error("Failed to upload title image:", error)
       } finally {
@@ -62,6 +68,7 @@ const ImageUploader = ({
           ...prevData,
           [currentSectionIndex]: imageData,
         }))
+        setImagePreview(imageData.url) // Mise à jour de l'aperçu de l'image de section dans le contexte global
       } catch (error) {
         console.error("Failed to upload section image:", error)
       } finally {

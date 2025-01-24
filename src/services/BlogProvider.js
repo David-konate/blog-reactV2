@@ -4,6 +4,9 @@ import axiosInstance from "./axios"
 const BlogContext = createContext()
 
 export const BlogProvider = ({ children }) => {
+  const [imagePreview, setImagePreview] = useState(null)
+  const [imageTitlePreview, setImageTitlePreview] = useState(null)
+
   const [imageTitleData, setImageTitleData] = useState({})
   const [imagesData, setImagesData] = useState({})
   const [metadata, setMetadata] = useState({
@@ -192,6 +195,10 @@ ${section.text || ""}`
         saveArticle,
         saveImages,
         checkOrGenerateSlug,
+        imageTitlePreview,
+        setImageTitlePreview,
+        imagePreview,
+        setImagePreview,
       }}
     >
       {children}
