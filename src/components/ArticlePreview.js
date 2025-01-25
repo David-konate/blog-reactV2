@@ -7,7 +7,28 @@ import { useBlogContext } from "../services/BlogProvider" // Import du contexte
  * Il se branche directement sur `metadata` fourni par le contexte.
  */
 const ArticlePreview = () => {
-  const { metadata, imageTitlePreview, imagePreview } = useBlogContext() // Récupération de metadata, imageTitlePreview et imagePreview depuis le contexte
+  const { metadata, imageTitlePreview, imagesPreview } = useBlogContext() // Récupération de metadata, imageTitlePreview et imagesPreview depuis le contexte
+  console.log({ imageTitlePreview })
+  console.log({ imagesPreview })
+
+  const renderImage = (src, alt) => {
+    // Vérifier si l'image est une URL Blob ou une URL valide
+    if (src && (src.startsWith("blob:") || src.startsWith("http"))) {
+      return (
+        <img
+          src={src}
+          alt={alt}
+          style={{
+            width: "100%",
+            height: "auto",
+            objectFit: "cover",
+          }}
+        />
+      )
+    } else {
+      return <p>Image non valide</p> // Si l'image n'est pas valide, afficher un message d'erreur.
+    }
+  }
 
   return (
     <div className="article-preview">
@@ -21,7 +42,10 @@ const ArticlePreview = () => {
         }}
       >
         <div className="article-preview-overlay">
-          <h1 className="article-preview-title">
+          <h1
+            className="article-preview-title"
+            style={{ color: "rgb(245, 109, 68)" }}
+          >
             {metadata.title || "Titre de l'article"}
           </h1>
           <p className="article-preview-author">
@@ -33,7 +57,6 @@ const ArticlePreview = () => {
 
       {/* Résumé */}
       <section className="article-preview-resume">
-        <h2>Résumé</h2>
         <div
           className="article-preview-resume-text"
           dangerouslySetInnerHTML={{
@@ -42,15 +65,9 @@ const ArticlePreview = () => {
         />
       </section>
 
-      {/* Catégorie */}
-      <section className="article-preview-category">
-        <h3>Catégorie : {metadata.category || "Non spécifiée"}</h3>
-      </section>
-
       {/* Sections */}
       <section className="article-preview-sections">
-        <h2>Sections</h2>
-        {metadata.sections && metadata.sections.length > 0 ? (
+        {metadata.sections &&
           metadata.sections.map((section, index) => (
             <div key={index} className="article-preview-section">
               <h3>Section {index + 1}</h3>
@@ -61,26 +78,21 @@ const ArticlePreview = () => {
                     section.text || "<em>Aucun contenu pour cette section</em>",
                 }}
               />
-              {section.image && (
-                <img
-                  src={imagePreview || section.image} // Utilise imagePreview du contexte ou section.image
-                  alt={`Section ${index + 1}`}
-                  style={{
-                    width: section.imageWidth || "100%",
-                    height: section.imageHeight || "auto",
-                    objectFit: "cover",
-                    position: "relative",
-                  }}
-                  className={`image-position-${section.imagePosition}`}
-                />
+              {/* Si la section a une image, l'afficher */}
+              {section.image &&
+                renderImage(section.image, `Section ${index + 1} - Image`)}
+
+              {/* Afficher uniquement l'image preview correspondant à l'index de la section */}
+              {imagesPreview && imagesPreview[index] && (
+                <div>
+                  {renderImage(
+                    imagesPreview[index],
+                    `Section ${index + 1} - Preview Image`
+                  )}
+                </div>
               )}
             </div>
-          ))
-        ) : (
-          <p className="article-preview-no-sections">
-            Aucune section n'a encore été ajoutée.
-          </p>
-        )}
+          ))}
       </section>
     </div>
   )

@@ -3,6 +3,7 @@ import BlogPostCreator from "../components/BlogPostCreator"
 import ArticlePreview from "../components/ArticlePreview"
 import { useBlogContext } from "../services/BlogProvider"
 import "../style.css"
+import BlogPreview from "../components/BlogPreview"
 const BlogEditorWithPreview = () => {
   const { metadata } = useBlogContext()
 
@@ -12,7 +13,10 @@ const BlogEditorWithPreview = () => {
         <BlogPostCreator />
       </div>
       <div className="blog-preview">
-        <ArticlePreview />
+        <div className="blog-creator-container">
+          <BlogPreview />
+          <ArticlePreview />
+        </div>
       </div>
     </div>
   )

@@ -42,14 +42,17 @@ const BlogPostCreator = () => {
         author: values.author,
         date: values.date,
         category: values.category,
-        slug: values.slug,
+        slug: generateSlugFromTitle(values.title), // Générer un slug basé sur le titre
         image: imageTitleData || "", // Image du titre
-        cardImage: "", // Ajoutez la logique pour gérer la "cardImage"
+        cardImage: "", // Ajouter la logique pour gérer la "cardImage" si nécessaire
         resume: values.resume,
-        sections: sections,
+        sections: sections.map(section => ({
+          text: section.text || "", // S'assurer que 'text' est défini
+          image: section.image || "", // S'assurer que 'image' est défini
+        })),
       })
     },
-    [imageTitleData, setMetadata]
+    [imageTitleData, setMetadata, sections, generateSlugFromTitle]
   )
 
   const createNewSection = setFieldValue => {
@@ -68,7 +71,7 @@ const BlogPostCreator = () => {
       },
     ]
     setSections(newSections)
-    setCurrentSectionIndex(newSections.length - 1)
+    setCurrentSectionIndex(prevIndex => prevIndex + 1)
     setFieldValue("sections", newSections)
   }
 

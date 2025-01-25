@@ -4,7 +4,7 @@ import axiosInstance from "./axios"
 const BlogContext = createContext()
 
 export const BlogProvider = ({ children }) => {
-  const [imagePreview, setImagePreview] = useState(null)
+  const [imagesPreview, setImagesPreview] = useState([])
   const [imageTitlePreview, setImageTitlePreview] = useState(null)
 
   const [imageTitleData, setImageTitleData] = useState({})
@@ -18,7 +18,12 @@ export const BlogProvider = ({ children }) => {
     image: "",
     cardImage: "",
     resume: "",
-    sections: [],
+    sections: [
+      {
+        text: "", // Le texte de la section
+        image: "", // L'image de la section
+      },
+    ],
   })
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
@@ -197,8 +202,8 @@ ${section.text || ""}`
         checkOrGenerateSlug,
         imageTitlePreview,
         setImageTitlePreview,
-        imagePreview,
-        setImagePreview,
+        imagesPreview,
+        setImagesPreview,
       }}
     >
       {children}

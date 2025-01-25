@@ -346,6 +346,7 @@ body {
   padding: 30px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  
 }
 
 .blog-creator-title {
@@ -482,6 +483,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 6px;
   box-sizing: border-box;
+  margin-top: 1rem;
 }
 
 .article-preview-header {
@@ -568,4 +570,79 @@ body {
 .blog-preview {
   flex: 1;
   min-width: 0;
+}
+.card {
+  max-width: 25rem; /* Ajuste la largeur maximale de la carte */
+  border-radius: 0.5rem; /* Coins arrondis */
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  border: 1px solid #e5e7eb; /* Couleur de la bordure */
+}
+
+.card-image {
+  position: relative;
+}
+
+.card-image img {
+  width: 100%; /* L'image occupe toute la largeur */
+  height: auto; /* Conserve les proportions */
+  object-fit: cover; /* Gère les débordements de manière esthétique */
+  display: block;
+}
+
+.card-badge {
+  position: absolute; /* Positionne le badge de manière absolue par rapport à son parent */
+  bottom: -0.7rem; /* Décale le badge légèrement vers le bas de l'image */
+  left: 1rem; /* Décale le badge vers la gauche de l'image */
+  background-color: #f97316; /* Orange */
+  color: white;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  border-radius: 9999px; /* Forme arrondie */
+  display: inline-block; /* S'adapte à la largeur du texte */
+}
+
+.card-content {
+  padding: 0.5rem 0.75rem; /* Moins d'espace autour du contenu pour réduire l'écart */
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  color: #1f2937; /* Gris foncé */
+  margin-top: 1rem; /* Supprime l'espace au-dessus du titre */
+  margin-bottom: 0.25rem; /* Réduit l'espace sous le titre */
+}
+
+.card-description {
+  font-size: 0.875rem;
+  color: #6b7280; /* Gris clair */
+  margin-bottom: 0.75rem; /* Réduit l'espace sous la description */
+  line-height: 1.5;
+}
+
+.card-footer {
+ 
+  font-size: 0.75rem;
+  color: #9ca3af; /* Gris clair */
+  margin-bottom: 0.5rem; /* Réduit l'espace sous le footer */
+}
+
+.card-footer span {
+  margin-right: 1rem;
+}
+
+.card-link {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #f97316; /* Orange */
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.card-link:hover {
+  color: #ea580c; /* Orange plus foncé */
 }

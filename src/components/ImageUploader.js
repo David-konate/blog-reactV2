@@ -1,21 +1,24 @@
-import React, { useState } from "react"
+import React, { useState, useRef } from "react"
 import { useBlogContext } from "../services/BlogProvider" // Import du contexte global
 
 const ImageUploader = ({
   uploaderType, // "title" ou "section"
-  currentSectionIndex,
   sections,
   setSections,
 }) => {
   const [loadingTitle, setLoadingTitle] = useState(false)
   const [loadingSection, setLoadingSection] = useState(false)
 
+  // Référence à l'input de fichier pour réinitialiser
+  const fileInputRef = useRef(null)
+
   // Accès au contexte global
   const {
     setImageTitleData,
     setImagesData,
-    setImagePreview,
+    setImagesPreview,
     setImageTitlePreview,
+    currentSectionIndex,
   } = useBlogContext()
 
   // Fonction pour uploader une image de titre
@@ -56,24 +59,36 @@ const ImageUploader = ({
         const imageData = {
           url: URL.createObjectURL(uploadedFile), // Remplacer par la réponse API
         }
+
         const updatedSections = [...sections]
         updatedSections[currentSectionIndex] = {
           ...updatedSections[currentSectionIndex],
-          image: imageData.url,
+          image: imageData.url, // Met à jour l'image de la section
           position: { x: 0, y: 0 },
           size: { width: 100, height: 100 },
         }
         setSections(updatedSections)
+
+        // Mettre à jour les données d'images dans le contexte global
         setImagesData(prevData => ({
           ...prevData,
           [currentSectionIndex]: imageData,
         }))
-        setImagePreview(imageData.url) // Mise à jour de l'aperçu de l'image de section dans le contexte global
+        setImagesPreview(prev =>
+          Array.isArray(prev) ? [...prev, imageData.url] : [imageData.url]
+        )
       } catch (error) {
         console.error("Failed to upload section image:", error)
       } finally {
         setLoadingSection(false)
       }
+    }
+  }
+
+  // Réinitialiser le champ d'upload après l'upload
+  const resetFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "" // Réinitialise l'input de fichier
     }
   }
 
@@ -84,6 +99,7 @@ const ImageUploader = ({
         <div>
           <label htmlFor="titleImageUpload">Upload a title image:</label>
           <input
+            ref={fileInputRef} // Référence à l'input
             type="file"
             id="titleImageUpload"
             accept="image/*"
@@ -100,6 +116,7 @@ const ImageUploader = ({
             Upload an image for the section:
           </label>
           <input
+            ref={fileInputRef} // Référence à l'input
             type="file"
             id="sectionImageUpload"
             accept="image/*"
