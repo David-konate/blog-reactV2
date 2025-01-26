@@ -1,57 +1,63 @@
 import React from "react"
-import "../style.css" // Ajoutez un fichier CSS pour styliser le composant si nécessaire.
-import { useBlogContext } from "../services/BlogProvider" // Import du contexte
+import "../style.css"
+import { useBlogContext } from "../services/BlogProvider"
 
-/**
- * Composant qui affiche un aperçu visuel de l'article.
- * Il se branche directement sur `metadata` fourni par le contexte.
- */
 const ArticlePreview = () => {
-  const { metadata, setMetadata, imageTitlePreview, imagesPreview } =
-    useBlogContext() // Récupération de metadata, setMetadata et autres données depuis le contexte
+  const { metadata, imageTitlePreview, imagesPreview, currentSectionIndex } =
+    useBlogContext()
+
   console.log({ imagesPreview })
+  const renderImage = (src, alt, width = "100%", index) => {
+    const isValidImage =
+      src && (src.startsWith("blob:") || src.startsWith("http"))
 
-  const handleWidthChange = (index, newWidth) => {
-    // Mettre à jour la largeur dans metadata.sections
-    setMetadata(prevMetadata => {
-      const updatedSections = [...prevMetadata.sections]
-      updatedSections[index] = {
-        ...updatedSections[index],
-        size: {
-          ...updatedSections[index].size,
-          width: `${newWidth}%`, // Met à jour uniquement la largeur
-        },
-      }
-      return { ...prevMetadata, sections: updatedSections }
-    })
-  }
-
-  const renderImage = (src, alt, width) => {
-    // Vérifier si l'image est une URL Blob ou une URL valide
-    if (src && (src.startsWith("blob:") || src.startsWith("http"))) {
-      return (
-        <img
-          src={src}
-          alt={alt}
-          style={{
-            width: width || "100%",
-            height: "auto",
-            objectFit: "cover",
-          }}
-        />
-      )
-    } else {
-      return <p>Image non valide</p> // Si l'image n'est pas valide, afficher un message d'erreur.
+    const size = imagesPreview?.[currentSectionIndex]?.size || {
+      width: 100,
+      positionX: 0,
+      positionY: 0,
     }
+    const { width: imgWidth, positionX, positionY } = size
+
+    return isValidImage ? (
+      <img
+        src={src}
+        alt={alt || "Image"}
+        style={{
+          width: `${imgWidth}%`,
+          height: "auto",
+          objectFit: "contain",
+          borderRadius: "8px",
+          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          position: "relative",
+          left: `${positionX}px`,
+          top: `${positionY}px`,
+        }}
+      />
+    ) : (
+      <div
+        style={{
+          width: "100%",
+          height: "200px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#f8d7da",
+          color: "#721c24",
+          border: "1px solid #f5c6cb",
+          borderRadius: "8px",
+        }}
+      >
+        <p>Image non valide</p>
+      </div>
+    )
   }
 
   return (
     <div className="article-preview">
-      {/* Titre principal */}
       <header
         className="article-preview-header"
         style={{
-          backgroundImage: `url(${imageTitlePreview || imageTitlePreview})`, // Utilise imageTitlePreview du contexte
+          backgroundImage: `url(${imageTitlePreview || imageTitlePreview})`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -70,7 +76,6 @@ const ArticlePreview = () => {
         </div>
       </header>
 
-      {/* Résumé */}
       <section className="article-preview-resume">
         <div
           className="article-preview-resume-text"
@@ -80,40 +85,45 @@ const ArticlePreview = () => {
         />
       </section>
 
-      {/* Sections */}
       <section className="article-preview-sections">
         {metadata.sections &&
           metadata.sections.map((section, index) => (
-            <div key={index} className="article-preview-section">
-              <h3>Section {index + 1}</h3>
+            <div
+              key={index}
+              className="article-preview-section"
+              style={{
+                position: "relative",
+                textAlign: "center",
+                marginBottom: "20px",
+              }}
+            >
               <div
                 className="article-preview-section-text"
                 dangerouslySetInnerHTML={{
                   __html:
                     section.text || "<em>Aucun contenu pour cette section</em>",
                 }}
+                style={{
+                  marginBottom: "20px",
+                }}
               />
-              {/* Contrôle pour ajuster la largeur */}
-              <div className="width-control">
-                <label htmlFor={`width-${index}`}>
-                  Largeur : {section.size?.width || "100%"}
-                </label>
-                <input
-                  id={`width-${index}`}
-                  type="range"
-                  min="10"
-                  max="100"
-                  value={parseInt(section.size?.width || "100")}
-                  onChange={e => handleWidthChange(index, e.target.value)}
-                />
-              </div>
-              {/* Afficher uniquement l'image preview correspondant à l'index de la section */}
+
               {imagesPreview && imagesPreview[index]?.url ? (
-                <div>
+                <div
+                  style={{
+                    position: "relative",
+                    marginTop: "20px",
+                    display: "block",
+                    marginLeft: "auto",
+                    marginRight: "auto",
+                    overflow: "hidden",
+                  }}
+                >
                   {renderImage(
                     imagesPreview[index].url,
                     `Section ${index + 1} - Preview Image`,
-                    section.size?.width
+                    "100%",
+                    index // Ajoutez l'index pour forcer le rerendu
                   )}
                 </div>
               ) : (

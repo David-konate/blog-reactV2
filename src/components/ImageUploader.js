@@ -62,13 +62,13 @@ const ImageUploader = ({
         img.src = URL.createObjectURL(uploadedFile)
 
         img.onload = () => {
-          const defaultWidth = img.width // Largeur de l'image
-          const defaultHeight = img.height // Hauteur de l'image
-
           const imageData = {
             url: img.src, // URL de l'image
-            position: { x: 0, y: 0 }, // Position par défaut
-            size: { width: defaultWidth, height: defaultHeight }, // Taille basée sur l'image
+            size: {
+              width: "100%", // Valeur par défaut pour la largeur
+              positionX: 0, // Valeur par défaut pour la position X
+              positionY: 0, // Valeur par défaut pour la position Y
+            },
           }
 
           // Mettre à jour la section spécifique dans le store
@@ -76,8 +76,7 @@ const ImageUploader = ({
             const updatedSections = [...prevSections]
             updatedSections[currentSectionIndex] = {
               ...updatedSections[currentSectionIndex],
-
-              size: imageData.size,
+              size: imageData.size, // Mettez à jour `size` directement
             }
             return updatedSections
           })
@@ -96,6 +95,7 @@ const ImageUploader = ({
             const updatedPreview = Array.isArray(prev) ? [...prev] : []
             updatedPreview[currentSectionIndex] = {
               url: imageData.url,
+              size: imageData.size, // Inclure le `size` dans l'aperçu
             }
             return updatedPreview
           })

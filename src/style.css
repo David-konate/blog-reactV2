@@ -409,8 +409,8 @@ btn btn-add-section
 /* Actions de section */
 .section-actions {
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: space-around;
+ 
 }
 
 .section-actions button {
@@ -568,6 +568,8 @@ btn btn-add-section
   margin-bottom: 20px;
   border-top: 1px solid #ddd;
   padding-top: 20px;
+  position: relative;
+  z-index: 0; /* Le texte doit être sous l'image */
 }
 
 .article-preview-section img {
@@ -578,6 +580,27 @@ btn btn-add-section
   margin-left: auto;
   margin-right: auto;
 }
+.image-container {
+  position: relative;
+  overflow: hidden; /* Empêche l'image de dépasser */
+  width: 100%; /* La taille du conteneur correspond à celle de la section */
+  height: auto; /* Hauteur ajustée */
+}
+
+.image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%); /* Centrer l'image */
+  width: auto; /* Ajustez la largeur selon les dimensions */
+  height: 100%; /* Image pleine hauteur */
+  object-fit: cover; /* Maintient le ratio tout en remplissant le conteneur */
+}
+
+
+
+
+
 
 .article-preview-no-sections {
   font-style: italic;

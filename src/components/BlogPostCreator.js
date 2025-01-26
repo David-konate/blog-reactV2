@@ -5,6 +5,7 @@ import ReactQuill from "react-quill"
 import "react-quill/dist/quill.snow.css"
 import { useBlogContext } from "../services/BlogProvider"
 import ImageUploader from "./ImageUploader"
+import SizeControl from "./SizeControl"
 
 const CreateArticleSchema = Yup.object().shape({
   title: Yup.string().required("Veuillez entrer le titre de votre article"),
@@ -26,6 +27,8 @@ const BlogPostCreator = () => {
     setSections,
     setMetadata,
   } = useBlogContext()
+
+  const [isSaving, setIsSaving] = useState(false)
 
   const generateSlugFromTitle = useCallback(title => {
     return title
@@ -49,8 +52,8 @@ const BlogPostCreator = () => {
         sections: sections.map(section => ({
           text: section.text || "", // S'assurer que 'text' est défini
           image: section.image || "", // S'assurer que 'image' est défini
-          position: section.position || "", // S'assurer que 'image' est défini
-          size: section.size || "", // S'assurer que 'image' est défini
+          position: section.position || "", // S'assurer que 'position' est défini
+          size: section.size || "", // S'assurer que 'size' est défini
         })),
       })
     },
@@ -58,27 +61,24 @@ const BlogPostCreator = () => {
   )
 
   const createNewSection = setFieldValue => {
-    // Vérifier si le nombre de sections est déjà à 4
     if (sections.length >= 4) {
       alert("Vous ne pouvez pas ajouter plus de 4 sections.")
       return
     }
 
-    // Vérifier si aucun texte ni image n'ont été ajoutés
-    const lastSection = sections[sections.length]
-    if (!lastSection?.text || !lastSection?.image) {
+    const lastSection = sections[sections.length - 1]
+    if (!lastSection?.text && !lastSection?.image) {
       alert(
         "Veuillez ajouter du texte ou une image à la section avant d'ajouter une nouvelle."
       )
       return
     }
 
-    // Ajouter la nouvelle section et réinitialiser le texte et l'image
     const newSections = [
       ...sections,
       {
-        text: "", // Réinitialisation du texte
-        image: "", // Réinitialisation de l'image
+        text: "",
+        image: "",
         position: null,
         size: null,
       },
@@ -90,15 +90,9 @@ const BlogPostCreator = () => {
   }
 
   const goBackToPreviousSection = () => {
-    // Vérifier si on est au début de la liste des sections
     if (currentSectionIndex > 0) {
-      // Créer une copie des sections
       const updatedSections = [...sections]
-
-      // Supprimer la section en cours
       updatedSections.pop()
-
-      // Mettre à jour les sections et l'index
       setSections(updatedSections)
       setCurrentSectionIndex(prevIndex => prevIndex - 1)
     }
@@ -106,10 +100,13 @@ const BlogPostCreator = () => {
 
   const save = async values => {
     try {
-      syncMetadata(values) // Synchronisation avec `metadata`
+      setIsSaving(true) // Set isSaving to true when saving begins
+      syncMetadata(values) // Synchronize with metadata
       const result = await saveArticle(values, imagesData, imageTitleData)
       console.log(result.message)
+      setIsSaving(false) // Set isSaving to false after the article is saved
     } catch (error) {
+      setIsSaving(false) // Set isSaving to false if an error occurs
       console.error(error.message)
     }
   }
@@ -273,7 +270,10 @@ const BlogPostCreator = () => {
                   sections={sections}
                   setSections={setSections}
                 />
+                {/* Contrôles pour la position et la taille */}
+                <SizeControl />
               </div>
+              <br />
               <div className="section-actions">
                 <button
                   type="button"

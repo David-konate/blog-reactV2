@@ -4,6 +4,7 @@ import ArticlePreview from "../components/ArticlePreview"
 import { useBlogContext } from "../services/BlogProvider"
 import "../style.css"
 import BlogPreview from "../components/BlogPreview"
+import SizeControl from "../components/SizeControl"
 const BlogEditorWithPreview = () => {
   const { metadata } = useBlogContext()
 
