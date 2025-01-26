@@ -481,6 +481,8 @@ btn btn-add-section
 }
 
 /* Aperçu de l'article */
+
+/* Aperçu de l'article */
 .article-preview {
   font-family: Arial, sans-serif;
   color: #333;
@@ -564,37 +566,48 @@ btn btn-add-section
   text-align: center; /* Centrer le contenu des sections */
 }
 
+/* Section avec image et texte */
 .article-preview-section {
+  position: relative;
   margin-bottom: 20px;
-  border-top: 1px solid #ddd;
-  padding-top: 20px;
-  position: relative;
-  z-index: 0; /* Le texte doit être sous l'image */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrer le texte */
+  justify-content: center; /* Centrer verticalement */
+  text-align: justify; /* Justifier le texte */
 }
 
+/* Image flottante */
 .article-preview-section img {
-  max-width: 100%;
+  max-width: 40%; /* Taille de l'image */
+  margin-bottom: 20px;
   border-radius: 5px;
-  margin-top: 10px;
-  display: block; /* S'assurer que l'image est centrée */
-  margin-left: auto;
-  margin-right: auto;
-}
-.image-container {
-  position: relative;
-  overflow: hidden; /* Empêche l'image de dépasser */
-  width: 100%; /* La taille du conteneur correspond à celle de la section */
-  height: auto; /* Hauteur ajustée */
+  object-fit: cover;
+  margin-right: 20px;
+  float: left; /* Faire flotter l'image à gauche */
 }
 
-.image-container img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transform: translate(-50%, -50%); /* Centrer l'image */
-  width: auto; /* Ajustez la largeur selon les dimensions */
-  height: 100%; /* Image pleine hauteur */
-  object-fit: cover; /* Maintient le ratio tout en remplissant le conteneur */
+/* Si l'image doit être à droite */
+.article-preview-section img.right {
+  float: right; /* Faire flotter l'image à droite */
+  margin-left: 20px;
+  margin-right: 0;
+}
+
+/* Style pour le texte */
+.article-preview-section-text {
+  max-width: 80%;
+  font-size: 1.1rem;
+  color: #555;
+  text-align: justify; /* Texte justifié autour de l'image */
+  line-height: 1.8;
+  clear: both; /* Assure que le texte ne touche pas l'image */
+}
+
+/* Pour les sections sans image */
+.article-preview-section.no-image {
+  text-align: center;
 }
 
 
@@ -694,4 +707,81 @@ btn btn-add-section
 
 .card-link:hover {
   color: #ea580c; /* Orange plus foncé */
+}
+/* Style global pour le composant SizeControl */
+.size-control-container {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 480px;
+  margin: 20px auto;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+}
+
+/* Titre principal */
+.size-control-heading {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+/* Conteneur des sliders */
+.size-control-slider {
+  margin-bottom: 20px;
+}
+
+/* Label de chaque slider */
+.slider-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 8px;
+  display: block;
+  transition: color 0.3s ease;
+}
+
+.slider-label:hover {
+  color: #007bff; /* Couleur bleue au survol */
+  cursor: pointer;
+}
+
+/* Style des sliders */
+.slider {
+  width: 100%;
+  height: 8px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Effet au survol du slider */
+.slider:hover {
+  background-color: #bbb;
+}
+
+/* Valeur affichée après chaque slider */
+.slider-value {
+  text-align: center;
+  font-size: 14px;
+  color: #333;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Transition de la valeur du slider */
+.slider-value {
+  transition: color 0.3s ease;
+}
+
+/* Style pour la valeur du slider */
+.slider-value {
+  color: #007bff;
+  font-weight: 500;
 }

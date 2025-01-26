@@ -11,7 +11,7 @@ const ArticlePreview = () => {
     const isValidImage =
       src && (src.startsWith("blob:") || src.startsWith("http"))
 
-    const size = imagesPreview?.[currentSectionIndex]?.size || {
+    const size = imagesPreview?.[index]?.size || {
       width: 100,
       positionX: 0,
       positionY: 0,

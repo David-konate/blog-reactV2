@@ -1,5 +1,6 @@
 import React, { useState } from "react"
 import { useBlogContext } from "../services/BlogProvider"
+import "../style.css" // Import du fichier CSS global
 
 const SizeControl = ({ sectionIndex }) => {
   const { imagesPreview, setImagesPreview, currentSectionIndex } =
@@ -31,27 +32,20 @@ const SizeControl = ({ sectionIndex }) => {
           [name]: parseInt(value, 10),
         },
       }
-      console.log("Updated ImagesPreview:", updatedPreview) // Log the updated state
       return updatedPreview
     })
   }
 
   return (
-    <div
-      style={{
-        margin: "20px 0",
-        padding: "10px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-      }}
-    >
-      <h4>Modifier la taille et la position de l'image</h4>
+    <div className="size-control-container">
+      <h4 className="size-control-heading">
+        Modifier la taille et la position de l'image
+      </h4>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label style={{ display: "block", marginBottom: "5px" }}>
-          Largeur (%):
-        </label>
+      <div className="size-control-slider">
+        <label className="slider-label">Largeur (%):</label>
         <input
+          className="slider"
           type="range"
           name="width"
           min="10"
@@ -59,14 +53,13 @@ const SizeControl = ({ sectionIndex }) => {
           value={size.width}
           onChange={handleSliderChange}
         />
-        <div>{size.width}%</div>
+        <div className="slider-value">{size.width}%</div>
       </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label style={{ display: "block", marginBottom: "5px" }}>
-          Position X (px):
-        </label>
+      <div className="size-control-slider">
+        <label className="slider-label">Position X (px):</label>
         <input
+          className="slider"
           type="range"
           name="positionX"
           min="-500"
@@ -74,14 +67,13 @@ const SizeControl = ({ sectionIndex }) => {
           value={size.positionX}
           onChange={handleSliderChange}
         />
-        <div>{size.positionX}px</div>
+        <div className="slider-value">{size.positionX}px</div>
       </div>
 
-      <div style={{ marginBottom: "15px" }}>
-        <label style={{ display: "block", marginBottom: "5px" }}>
-          Position Y (px):
-        </label>
+      <div className="size-control-slider">
+        <label className="slider-label">Position Y (px):</label>
         <input
+          className="slider"
           type="range"
           name="positionY"
           min="-500"
@@ -89,7 +81,7 @@ const SizeControl = ({ sectionIndex }) => {
           value={size.positionY}
           onChange={handleSliderChange}
         />
-        <div>{size.positionY}px</div>
+        <div className="slider-value">{size.positionY}px</div>
       </div>
     </div>
   )
