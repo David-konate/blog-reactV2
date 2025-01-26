@@ -76,8 +76,7 @@ const ImageUploader = ({
             const updatedSections = [...prevSections]
             updatedSections[currentSectionIndex] = {
               ...updatedSections[currentSectionIndex],
-              image: imageData.url, // Met à jour l'image de la section
-              position: imageData.position,
+
               size: imageData.size,
             }
             return updatedSections
@@ -97,8 +96,6 @@ const ImageUploader = ({
             const updatedPreview = Array.isArray(prev) ? [...prev] : []
             updatedPreview[currentSectionIndex] = {
               url: imageData.url,
-              size: imageData.size,
-              position: imageData.position,
             }
             return updatedPreview
           })

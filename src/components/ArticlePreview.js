@@ -7,10 +7,26 @@ import { useBlogContext } from "../services/BlogProvider" // Import du contexte
  * Il se branche directement sur `metadata` fourni par le contexte.
  */
 const ArticlePreview = () => {
-  const { metadata, imageTitlePreview, imagesPreview } = useBlogContext() // Récupération de metadata, imageTitlePreview et imagesPreview depuis le contexte
+  const { metadata, setMetadata, imageTitlePreview, imagesPreview } =
+    useBlogContext() // Récupération de metadata, setMetadata et autres données depuis le contexte
   console.log({ imagesPreview })
 
-  const renderImage = (src, alt) => {
+  const handleWidthChange = (index, newWidth) => {
+    // Mettre à jour la largeur dans metadata.sections
+    setMetadata(prevMetadata => {
+      const updatedSections = [...prevMetadata.sections]
+      updatedSections[index] = {
+        ...updatedSections[index],
+        size: {
+          ...updatedSections[index].size,
+          width: `${newWidth}%`, // Met à jour uniquement la largeur
+        },
+      }
+      return { ...prevMetadata, sections: updatedSections }
+    })
+  }
+
+  const renderImage = (src, alt, width) => {
     // Vérifier si l'image est une URL Blob ou une URL valide
     if (src && (src.startsWith("blob:") || src.startsWith("http"))) {
       return (
@@ -18,7 +34,7 @@ const ArticlePreview = () => {
           src={src}
           alt={alt}
           style={{
-            width: "100%",
+            width: width || "100%",
             height: "auto",
             objectFit: "cover",
           }}
@@ -77,12 +93,27 @@ const ArticlePreview = () => {
                     section.text || "<em>Aucun contenu pour cette section</em>",
                 }}
               />
+              {/* Contrôle pour ajuster la largeur */}
+              <div className="width-control">
+                <label htmlFor={`width-${index}`}>
+                  Largeur : {section.size?.width || "100%"}
+                </label>
+                <input
+                  id={`width-${index}`}
+                  type="range"
+                  min="10"
+                  max="100"
+                  value={parseInt(section.size?.width || "100")}
+                  onChange={e => handleWidthChange(index, e.target.value)}
+                />
+              </div>
               {/* Afficher uniquement l'image preview correspondant à l'index de la section */}
               {imagesPreview && imagesPreview[index]?.url ? (
                 <div>
                   {renderImage(
-                    imagesPreview[0].url,
-                    `Section ${index + 1} - Preview Image`
+                    imagesPreview[index].url,
+                    `Section ${index + 1} - Preview Image`,
+                    section.size?.width
                   )}
                 </div>
               ) : (
