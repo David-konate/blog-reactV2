@@ -1,19 +1,18 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useBlogContext } from "../services/BlogProvider"
 import "../style.css" // Import du fichier CSS global
 
 const SizeControl = ({ sectionIndex }) => {
-  const { imagesPreview, setImagesPreview, currentSectionIndex } =
-    useBlogContext()
+  const { imagesPreview, setImagesPreview } = useBlogContext()
 
-  const [size, setSize] = useState(
-    imagesPreview[currentSectionIndex]?.size || {
-      width: 100, // Slider values are percentages or pixels
-      positionX: 0,
-      positionY: 0,
-    }
-  )
+  // Initialiser la taille et la position de la section actuelle
+  const [size, setSize] = useState({
+    width: imagesPreview[sectionIndex]?.size?.width || 100,
+    positionX: imagesPreview[sectionIndex]?.size?.positionX || 0,
+    positionY: imagesPreview[sectionIndex]?.size?.positionY || 0,
+  })
 
+  // Mettre à jour la taille et la position dans l'état local et dans imagesPreview
   const handleSliderChange = event => {
     const { name, value } = event.target
 
@@ -22,19 +21,36 @@ const SizeControl = ({ sectionIndex }) => {
       [name]: parseInt(value, 10),
     }))
 
-    // Update preview in context
-    setImagesPreview(prev => {
-      const updatedPreview = [...prev]
-      updatedPreview[currentSectionIndex] = {
-        ...updatedPreview[currentSectionIndex],
+    // Mettre à jour les données de taille et position dans imagesPreview
+    setImagesPreview(previmagesPreview => {
+      const updatedimagesPreview = [...previmagesPreview]
+      updatedimagesPreview[sectionIndex] = {
+        ...updatedimagesPreview[sectionIndex],
         size: {
-          ...updatedPreview[currentSectionIndex]?.size,
+          ...updatedimagesPreview[sectionIndex]?.size,
           [name]: parseInt(value, 10),
         },
       }
-      return updatedPreview
+      return updatedimagesPreview
     })
   }
+
+  useEffect(() => {
+    const currentSection = imagesPreview[sectionIndex]
+    if (currentSection && currentSection.size) {
+      setSize({
+        width: currentSection.size.width || 100,
+        positionX: currentSection.size.positionX || 0,
+        positionY: currentSection.size.positionY || 0,
+      })
+    } else {
+      setSize({
+        width: "100%",
+        positionX: 0,
+        positionY: 0,
+      })
+    }
+  }, [sectionIndex, imagesPreview])
 
   return (
     <div className="size-control-container">

@@ -11,8 +11,9 @@ const ArticlePreview = () => {
     const isValidImage =
       src && (src.startsWith("blob:") || src.startsWith("http"))
 
-    const size = imagesPreview?.[index]?.size || {
-      width: 100,
+    // Taille de l'image basée sur le preview
+    const size = {
+      width: "100%", // par défaut, l'image prend la largeur maximale
       positionX: 0,
       positionY: 0,
     }
@@ -23,14 +24,15 @@ const ArticlePreview = () => {
         src={src}
         alt={alt || "Image"}
         style={{
-          width: `${imgWidth}%`,
+          width: `${imgWidth || "100%"}`, // S'assurer que la largeur est toujours à 100%
           height: "auto",
-          objectFit: "contain",
+          objectFit: "cover", // Garder l'image bien ajustée tout en conservant son ratio
           borderRadius: "8px",
           boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
           position: "relative",
           left: `${positionX}px`,
           top: `${positionY}px`,
+          maxWidth: "100%", // Limiter la largeur au maximum du conteneur
         }}
       />
     ) : (

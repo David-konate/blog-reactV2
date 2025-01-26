@@ -8,8 +8,7 @@ export const BlogProvider = ({ children }) => {
   const [imageTitlePreview, setImageTitlePreview] = useState(null)
 
   const [imageTitleData, setImageTitleData] = useState({})
-  const [imagesData, setImagesData] = useState([])
-
+  const [imagesData, setImagesData] = useState({})
   const [metadata, setMetadata] = useState({
     title: "",
     author: "",
@@ -31,10 +30,6 @@ export const BlogProvider = ({ children }) => {
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
   const [sections, setSections] = useState(metadata.sections)
-  // Fonction pour mettre à jour les prévisualisations d'images
-  const updateImagesPreview = newImagesPreview => {
-    setImagesPreview(newImagesPreview)
-  }
   // Enregistrer un article
   const saveArticle = async (metadata, imagesData = [], imageTitleData) => {
     try {
@@ -49,7 +44,7 @@ export const BlogProvider = ({ children }) => {
           ...section,
           image: "", // Initialisation des images dans les sections
           position: { x: 0, y: 0 },
-          size: { width: "100%", height: "auto" },
+          size: { width: 0, height: 0 },
         })),
       }
 
@@ -209,7 +204,6 @@ ${section.text || ""}`
         saveArticle,
         saveImages,
         checkOrGenerateSlug,
-        updateImagesPreview,
         imageTitlePreview,
         setImageTitlePreview,
         imagesPreview,
