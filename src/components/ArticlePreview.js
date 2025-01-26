@@ -8,7 +8,6 @@ import { useBlogContext } from "../services/BlogProvider" // Import du contexte
  */
 const ArticlePreview = () => {
   const { metadata, imageTitlePreview, imagesPreview } = useBlogContext() // Récupération de metadata, imageTitlePreview et imagesPreview depuis le contexte
-  console.log({ imageTitlePreview })
   console.log({ imagesPreview })
 
   const renderImage = (src, alt) => {
@@ -78,18 +77,16 @@ const ArticlePreview = () => {
                     section.text || "<em>Aucun contenu pour cette section</em>",
                 }}
               />
-              {/* Si la section a une image, l'afficher */}
-              {section.image &&
-                renderImage(section.image, `Section ${index + 1} - Image`)}
-
               {/* Afficher uniquement l'image preview correspondant à l'index de la section */}
-              {imagesPreview && imagesPreview[index] && (
+              {imagesPreview && imagesPreview[index]?.url ? (
                 <div>
                   {renderImage(
-                    imagesPreview[index],
+                    imagesPreview[0].url,
                     `Section ${index + 1} - Preview Image`
                   )}
                 </div>
+              ) : (
+                <div>Pas d'image...</div>
               )}
             </div>
           ))}

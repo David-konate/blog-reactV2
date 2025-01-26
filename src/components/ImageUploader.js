@@ -19,6 +19,7 @@ const ImageUploader = ({
     setImagesPreview,
     setImageTitlePreview,
     currentSectionIndex,
+    imagesPreview,
   } = useBlogContext()
 
   // Fonction pour uploader une image de titre
@@ -51,32 +52,57 @@ const ImageUploader = ({
     if (files && files[0]) {
       const uploadedFile = files[0]
       setLoadingSection(true)
+
       try {
         const formData = new FormData()
         formData.append("image", uploadedFile)
 
-        // Simulation de l'upload ou appel d'API
-        const imageData = {
-          url: URL.createObjectURL(uploadedFile), // Remplacer par la réponse API
-        }
+        // Créer un objet Image pour obtenir les dimensions
+        const img = new Image()
+        img.src = URL.createObjectURL(uploadedFile)
 
-        const updatedSections = [...sections]
-        updatedSections[currentSectionIndex] = {
-          ...updatedSections[currentSectionIndex],
-          image: imageData.url, // Met à jour l'image de la section
-          position: { x: 0, y: 0 },
-          size: { width: 100, height: 100 },
-        }
-        setSections(updatedSections)
+        img.onload = () => {
+          const defaultWidth = img.width // Largeur de l'image
+          const defaultHeight = img.height // Hauteur de l'image
 
-        // Mettre à jour les données d'images dans le contexte global
-        setImagesData(prevData => ({
-          ...prevData,
-          [currentSectionIndex]: imageData,
-        }))
-        setImagesPreview(prev =>
-          Array.isArray(prev) ? [...prev, imageData.url] : [imageData.url]
-        )
+          const imageData = {
+            url: img.src, // URL de l'image
+            position: { x: 0, y: 0 }, // Position par défaut
+            size: { width: defaultWidth, height: defaultHeight }, // Taille basée sur l'image
+          }
+
+          // Mettre à jour la section spécifique dans le store
+          setSections(prevSections => {
+            const updatedSections = [...prevSections]
+            updatedSections[currentSectionIndex] = {
+              ...updatedSections[currentSectionIndex],
+              image: imageData.url, // Met à jour l'image de la section
+              position: imageData.position,
+              size: imageData.size,
+            }
+            return updatedSections
+          })
+
+          // Mettre à jour les données d'images dans le contexte global
+          setImagesData(prevData => {
+            return {
+              ...prevData,
+              [currentSectionIndex]: imageData, // Enregistrer l'image de cette section avec position et taille
+            }
+          })
+
+          // Mettre à jour l'aperçu des images dans le contexte global
+          setImagesPreview(prev => {
+            // Si `prev` est un tableau, ajoutez une nouvelle entrée, sinon créez un nouveau tableau
+            const updatedPreview = Array.isArray(prev) ? [...prev] : []
+            updatedPreview[currentSectionIndex] = {
+              url: imageData.url,
+              size: imageData.size,
+              position: imageData.position,
+            }
+            return updatedPreview
+          })
+        }
       } catch (error) {
         console.error("Failed to upload section image:", error)
       } finally {

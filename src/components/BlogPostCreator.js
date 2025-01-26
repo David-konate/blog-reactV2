@@ -49,6 +49,8 @@ const BlogPostCreator = () => {
         sections: sections.map(section => ({
           text: section.text || "", // S'assurer que 'text' est défini
           image: section.image || "", // S'assurer que 'image' est défini
+          position: section.position || "", // S'assurer que 'image' est défini
+          size: section.size || "", // S'assurer que 'image' est défini
         })),
       })
     },
@@ -56,27 +58,48 @@ const BlogPostCreator = () => {
   )
 
   const createNewSection = setFieldValue => {
+    // Vérifier si le nombre de sections est déjà à 4
     if (sections.length >= 4) {
       alert("Vous ne pouvez pas ajouter plus de 4 sections.")
       return
     }
+
+    // Vérifier si aucun texte ni image n'ont été ajoutés
+    const lastSection = sections[sections.length]
+    if (!lastSection?.text || !lastSection?.image) {
+      alert(
+        "Veuillez ajouter du texte ou une image à la section avant d'ajouter une nouvelle."
+      )
+      return
+    }
+
+    // Ajouter la nouvelle section et réinitialiser le texte et l'image
     const newSections = [
       ...sections,
       {
-        text: "",
-        image: "",
-        imageHeight: null,
-        imageWidth: null,
-        imagePosition: "top",
+        text: "", // Réinitialisation du texte
+        image: "", // Réinitialisation de l'image
+        position: null,
+        size: null,
       },
     ]
+
     setSections(newSections)
     setCurrentSectionIndex(prevIndex => prevIndex + 1)
     setFieldValue("sections", newSections)
   }
 
   const goBackToPreviousSection = () => {
+    // Vérifier si on est au début de la liste des sections
     if (currentSectionIndex > 0) {
+      // Créer une copie des sections
+      const updatedSections = [...sections]
+
+      // Supprimer la section en cours
+      updatedSections.pop()
+
+      // Mettre à jour les sections et l'index
+      setSections(updatedSections)
       setCurrentSectionIndex(prevIndex => prevIndex - 1)
     }
   }
@@ -228,7 +251,7 @@ const BlogPostCreator = () => {
             <div className="section-editor">
               <h3>Section {currentSectionIndex + 1}</h3>
               <ReactQuill
-                value={sections[currentSectionIndex]?.text || ""}
+                value={sections[currentSectionIndex]?.text || ""} // Affiche une chaîne vide si pas de texte
                 onChange={value => {
                   const updatedSections = [...sections]
                   updatedSections[currentSectionIndex] = {
@@ -241,6 +264,7 @@ const BlogPostCreator = () => {
                 }}
                 className="react-quill"
               />
+
               <div className="section-uploader">
                 <h2>Images des sections</h2>
                 <ImageUploader
@@ -255,15 +279,24 @@ const BlogPostCreator = () => {
                   type="button"
                   onClick={() => createNewSection(setFieldValue)}
                   className="btn btn-add-section"
-                  disabled={sections.length >= 4}
+                  disabled={sections.length >= 4} // Désactive le bouton si sections.length >= 4
+                  style={{
+                    cursor: sections.length >= 4 ? "not-allowed" : "pointer",
+                    opacity: sections.length >= 4 ? 0.6 : 1,
+                  }}
                 >
                   Créer une nouvelle section
                 </button>
+
                 <button
                   type="button"
                   onClick={goBackToPreviousSection}
                   className="btn btn-prev-section"
-                  disabled={currentSectionIndex <= 0}
+                  disabled={sections.length <= 1} // Désactive le bouton si sections.length <= 1
+                  style={{
+                    cursor: sections.length <= 1 ? "not-allowed" : "pointer",
+                    opacity: sections.length <= 1 ? 0.6 : 1,
+                  }}
                 >
                   Retour à la section précédente
                 </button>

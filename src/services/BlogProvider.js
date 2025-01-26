@@ -4,7 +4,7 @@ import axiosInstance from "./axios"
 const BlogContext = createContext()
 
 export const BlogProvider = ({ children }) => {
-  const [imagesPreview, setImagesPreview] = useState([])
+  const [imagesPreview, setImagesPreview] = useState({})
   const [imageTitlePreview, setImageTitlePreview] = useState(null)
 
   const [imageTitleData, setImageTitleData] = useState({})
@@ -22,6 +22,8 @@ export const BlogProvider = ({ children }) => {
       {
         text: "", // Le texte de la section
         image: "", // L'image de la section
+        position: { x: "", y: "" },
+        size: { width: "", height: "" },
       },
     ],
   })
@@ -41,6 +43,8 @@ export const BlogProvider = ({ children }) => {
         sections: metadata.sections.map(section => ({
           ...section,
           image: "", // Initialisation des images dans les sections
+          position: { x: 0, y: 0 },
+          size: { width: 0, height: 0 },
         })),
       }
 

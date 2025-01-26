@@ -405,7 +405,7 @@ body {
   font-size: 1.25rem;
   margin-bottom: 15px;
 }
-
+btn btn-add-section
 /* Actions de section */
 .section-actions {
   display: flex;
@@ -421,6 +421,12 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+.btn-disabled {
+  background-color: #ddd; /* Changer la couleur de fond pour un effet visuel */
+  cursor: not-allowed; /* Indiquer que le bouton est désactivé */
+  opacity: 0.6; /* Modifier l'opacité pour refléter l'état désactivé */
+}
+
 
 .btn-add-section {
   background-color: #28a745;
@@ -484,6 +490,9 @@ body {
   border-radius: 6px;
   box-sizing: border-box;
   margin-top: 1rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto; /* Centrer le conteneur principal */
 }
 
 .article-preview-header {
@@ -492,6 +501,11 @@ body {
   color: #fff;
   border-radius: 6px;
   overflow: hidden;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center; /* Centrer le texte à l'intérieur de l'en-tête */
 }
 
 .article-preview-overlay {
@@ -505,42 +519,49 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
   padding: 20px;
   border-radius: 6px;
+  text-align: center; /* Centrer le texte dans la superposition */
 }
 
 .article-preview-title {
   font-size: 2.5rem;
   margin-bottom: 10px;
+  text-align: center; /* Centrer le titre */
 }
 
 .article-preview-author {
   font-size: 1rem;
   font-style: italic;
+  text-align: center; /* Centrer le nom de l'auteur et la date */
 }
 
 .article-preview-resume {
   margin: 20px 10px;
+  text-align: center; /* Centrer le résumé */
 }
 
 .article-preview-resume h2 {
   margin-bottom: 10px;
+  text-align: center; /* Centrer le titre du résumé */
 }
 
 .article-preview-resume-text {
   background: #f9f9f9;
   padding: 15px;
   border-radius: 5px;
+  text-align: center; /* Centrer le texte dans le résumé */
 }
 
 .article-preview-category {
   margin: 20px 10px;
   font-weight: bold;
+  text-align: center; /* Centrer la catégorie */
 }
 
 .article-preview-sections {
   margin: 20px 10px;
+  text-align: center; /* Centrer le contenu des sections */
 }
 
 .article-preview-section {
@@ -553,12 +574,17 @@ body {
   max-width: 100%;
   border-radius: 5px;
   margin-top: 10px;
+  display: block; /* S'assurer que l'image est centrée */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .article-preview-no-sections {
   font-style: italic;
   color: #888;
+  text-align: center; /* Centrer le texte "Aucune section" */
 }
+
 
 /* Conteneur de l'éditeur et de l'aperçu */
 .blog-editor-preview-container {
