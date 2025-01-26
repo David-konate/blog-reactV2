@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import "../style.css"
 import { useBlogContext } from "../services/BlogProvider"
 
@@ -7,24 +7,26 @@ const ArticlePreview = () => {
     useBlogContext()
 
   console.log({ imagesPreview })
+
   const renderImage = (src, alt, width = "100%", index) => {
     const isValidImage =
       src && (src.startsWith("blob:") || src.startsWith("http"))
 
-    // Taille de l'image basée sur le preview
-    const size = {
-      width: "100%", // par défaut, l'image prend la largeur maximale
+    // Vérifier si une taille spécifique est définie dans imagesPreview
+    const sectionSize = imagesPreview && imagesPreview[index]?.size
+    const imgWidth = sectionSize ? sectionSize.width : width // Si sectionSize.width est défini, on l'utilise, sinon on prend la valeur par défaut
+    console.log(imgWidth)
+    const { positionX, positionY } = sectionSize || {
       positionX: 0,
       positionY: 0,
     }
-    const { width: imgWidth, positionX, positionY } = size
 
     return isValidImage ? (
       <img
         src={src}
         alt={alt || "Image"}
         style={{
-          width: `${imgWidth || "100%"}`, // S'assurer que la largeur est toujours à 100%
+          width: `${imgWidth}%` || "100%", // Appliquer la largeur dynamique
           height: "auto",
           objectFit: "cover", // Garder l'image bien ajustée tout en conservant son ratio
           borderRadius: "8px",
@@ -53,6 +55,14 @@ const ArticlePreview = () => {
       </div>
     )
   }
+
+  // Effet pour écouter les changements dans imagesPreview et forcer la mise à jour
+  useEffect(() => {
+    if (imagesPreview && imagesPreview.length > 0) {
+      // Si imagesPreview est disponible et contient des données, on déclenche une mise à jour
+      console.log("Mise à jour des images preview:", imagesPreview)
+    }
+  }, [imagesPreview]) // L'effet sera déclenché chaque fois que imagesPreview changera
 
   return (
     <div className="article-preview">
@@ -124,7 +134,7 @@ const ArticlePreview = () => {
                   {renderImage(
                     imagesPreview[index].url,
                     `Section ${index + 1} - Preview Image`,
-                    "100%",
+                    "100%", // Largeur par défaut
                     index // Ajoutez l'index pour forcer le rerendu
                   )}
                 </div>
