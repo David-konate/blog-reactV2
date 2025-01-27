@@ -481,8 +481,6 @@ btn btn-add-section
 }
 
 /* Aperçu de l'article */
-
-/* Aperçu de l'article */
 .article-preview {
   font-family: Arial, sans-serif;
   color: #333;
@@ -566,48 +564,52 @@ btn btn-add-section
   text-align: center; /* Centrer le contenu des sections */
 }
 
-/* Section avec image et texte */
 .article-preview-section {
+  margin-bottom: 20px;
+  border-top: 1px solid #ddd;
+  padding-top: 20px;
   position: relative;
-  margin-bottom: 20px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Centrer le texte */
-  justify-content: center; /* Centrer verticalement */
-  text-align: justify; /* Justifier le texte */
+  z-index: 0;
 }
 
-/* Image flottante */
 .article-preview-section img {
-  max-width: 40%; /* Taille de l'image */
-  margin-bottom: 20px;
-  border-radius: 5px;
-  object-fit: cover;
-  margin-right: 20px;
-  float: left; /* Faire flotter l'image à gauche */
+  position: relative; /* Permet d'appliquer left/top */
+  margin-right: 15px; /* Espacement à droite de l'image */
+  margin-bottom: 15px; /* Espacement en bas de l'image */
+  width: 50%; /* Largeur par défaut */
+  height: auto; /* Hauteur automatique en fonction du ratio */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  max-width: 100%; /* Limiter la largeur au maximum du conteneur */
 }
 
-/* Si l'image doit être à droite */
-.article-preview-section img.right {
-  float: right; /* Faire flotter l'image à droite */
-  margin-left: 20px;
-  margin-right: 0;
+
+
+
+.article-preview-section::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-/* Style pour le texte */
-.article-preview-section-text {
-  max-width: 80%;
-  font-size: 1.1rem;
-  color: #555;
-  text-align: justify; /* Texte justifié autour de l'image */
-  line-height: 1.8;
-  clear: both; /* Assure que le texte ne touche pas l'image */
+
+
+.image-container {
+  position: relative;
+  overflow: hidden; /* Empêche l'image de dépasser */
+  width: 100%; /* La taille du conteneur correspond à celle de la section */
+  height: auto; /* Hauteur ajustée */
 }
 
-/* Pour les sections sans image */
-.article-preview-section.no-image {
-  text-align: center;
+.image-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%); /* Centrer l'image */
+  width: auto; /* Ajustez la largeur selon les dimensions */
+  height: 100%; /* Image pleine hauteur */
+  object-fit: cover; /* Maintient le ratio tout en remplissant le conteneur */
 }
 
 

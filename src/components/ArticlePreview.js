@@ -14,29 +14,35 @@ const ArticlePreview = () => {
 
     // Vérifier si une taille spécifique est définie dans imagesPreview
     const sectionSize = imagesPreview && imagesPreview[index]?.size
-    const imgWidth = sectionSize ? sectionSize.width : width // Si sectionSize.width est défini, on l'utilise, sinon on prend la valeur par défaut
-    console.log(imgWidth)
-    const { positionX, positionY } = sectionSize || {
-      positionX: 0,
-      positionY: 0,
-    }
+    const imgWidth = sectionSize ? sectionSize.width : width // Largeur dynamique
+    const { positionX = 0, positionY = 0 } = sectionSize || {}
 
     return isValidImage ? (
-      <img
-        src={src}
-        alt={alt || "Image"}
+      <div
         style={{
-          width: `${imgWidth}%` || "100%", // Appliquer la largeur dynamique
-          height: "auto",
-          objectFit: "cover", // Garder l'image bien ajustée tout en conservant son ratio
-          borderRadius: "8px",
-          boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-          position: "relative",
-          left: `${positionX}px`,
-          top: `${positionY}px`,
-          maxWidth: "100%", // Limiter la largeur au maximum du conteneur
+          display: "inline-block", // Assurer l'affichage en ligne (pour flotter avec le texte)
+          width: `${imgWidth}%`, // Largeur dynamique
+          // Espacement en bas
+          position: "relative", // Positionner l'image relativement au conteneur
+          marginLeft: `${positionX}px`, // Déplacement horizontal
+          marginTop: `${positionY}px`, // Déplacement vertical
+          maxWidth: "100%", // Empêcher l'image de sortir du conteneur
+          overflow: "hidden", // Cacher l'image qui sort du conteneur
+          boxSizing: "border-box", // Inclure les bordures dans la largeur totale
         }}
-      />
+      >
+        <img
+          src={src}
+          alt={alt || "Image"}
+          style={{
+            width: "100%", // Largeur de l'image (100% du conteneur)
+            height: "auto", // Hauteur auto pour conserver le ratio
+            objectFit: "cover", // Maintenir le ratio sans déformation
+            borderRadius: "8px",
+            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+        />
+      </div>
     ) : (
       <div
         style={{
@@ -105,42 +111,31 @@ const ArticlePreview = () => {
               className="article-preview-section"
               style={{
                 position: "relative",
-                textAlign: "center",
                 marginBottom: "20px",
               }}
             >
+              {imagesPreview && imagesPreview[index]?.url && (
+                <div
+                  style={{
+                    float: "left", // Permet l'enroulement du texte autour de l'image
+                  }}
+                >
+                  {renderImage(
+                    imagesPreview[index].url, // URL de l'image
+                    `Section ${index + 1} - Preview Image`, // Texte alternatif
+                    "50%", // Largeur par défaut (modifiable dynamiquement)
+                    index // Index pour récupérer les dimensions et positions
+                  )}
+                </div>
+              )}
+
               <div
                 className="article-preview-section-text"
                 dangerouslySetInnerHTML={{
                   __html:
                     section.text || "<em>Aucun contenu pour cette section</em>",
                 }}
-                style={{
-                  marginBottom: "20px",
-                }}
               />
-
-              {imagesPreview && imagesPreview[index]?.url ? (
-                <div
-                  style={{
-                    position: "relative",
-                    marginTop: "20px",
-                    display: "block",
-                    marginLeft: "auto",
-                    marginRight: "auto",
-                    overflow: "hidden",
-                  }}
-                >
-                  {renderImage(
-                    imagesPreview[index].url,
-                    `Section ${index + 1} - Preview Image`,
-                    "100%", // Largeur par défaut
-                    index // Ajoutez l'index pour forcer le rerendu
-                  )}
-                </div>
-              ) : (
-                <div>Pas d'image...</div>
-              )}
             </div>
           ))}
       </section>
