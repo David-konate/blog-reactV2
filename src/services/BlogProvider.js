@@ -18,11 +18,18 @@ export const BlogProvider = ({ children }) => {
     image: "",
     cardImage: "",
     resume: "",
-    sections: [],
+    sections: [
+      {
+        text: "", // Le texte de la section
+        image: "", // L'image de la section
+        position: { x: "", y: "" },
+        size: { width: "", height: "" },
+      },
+    ],
   })
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
-  const [sections, setSections] = useState(metadata.sections)
+  const [sections, setSections] = useState([metadata.sections])
   // Enregistrer un article
   const saveArticle = async (metadata, imagesData = [], imageTitleData) => {
     try {

@@ -563,6 +563,48 @@ btn btn-add-section
   margin: 20px 10px;
   text-align: center; /* Centrer le contenu des sections */
 }
+/* Style pour le bouton par défaut */
+.btn {
+  background-color: #4CAF50; /* Couleur de fond du bouton */
+  color: white; /* Texte en blanc */
+  padding: 10px 20px; /* Espacement interne */
+  border: none; /* Pas de bordure */
+  border-radius: 5px; /* Coins arrondis */
+  font-size: 16px; /* Taille du texte */
+  cursor: pointer; /* Le curseur est une main */
+  transition: background-color 0.3s; /* Transition pour le hover */
+}
+
+/* Hover pour le bouton */
+.btn:hover {
+  background-color: #45a049; /* Légère modification de la couleur au survol */
+}
+
+/* Style pour le bouton désactivé (non cliquable) */
+.btn:disabled,
+.btn[disabled] {
+  background-color: #e0e0e0; /* Couleur grise pour les boutons désactivés */
+  color: #bdbdbd; /* Texte gris */
+  cursor: not-allowed; /* Curseur non autorisé */
+  opacity: 0.6; /* Transparence pour rendre le bouton "grisé" */
+}
+
+/* Style spécifique pour les boutons de suppression et d'ajout */
+.btn-remove-section {
+  background-color: #f44336; /* Rouge pour le bouton de suppression */
+}
+
+.btn-remove-section:hover {
+  background-color: #e53935; /* Rouge plus foncé au survol */
+}
+
+.btn-add-section {
+  background-color: #4CAF50; /* Vert pour le bouton d'ajout */
+}
+
+.btn-add-section:hover {
+  background-color: #388e3c; /* Vert plus foncé au survol */
+}
 
 .article-preview-section {
   margin-bottom: 20px;

@@ -17,17 +17,12 @@ const CreateArticleSchema = Yup.object().shape({
 })
 
 const BlogPostCreator = () => {
-  const {
-    saveArticle,
-    imageTitleData,
-    imagesData,
-    currentSectionIndex,
-    setCurrentSectionIndex,
-    sections,
-    setSections,
-    setMetadata,
-  } = useBlogContext()
+  const { saveArticle, metadata, setMetadata, imageTitleData, imagesData } =
+    useBlogContext()
 
+  const [isSaving, setIsSaving] = useState(false)
+
+  // Fonction pour générer un slug à partir du titre
   const generateSlugFromTitle = useCallback(title => {
     return title
       .toLowerCase()
@@ -36,86 +31,49 @@ const BlogPostCreator = () => {
       .trim()
   }, [])
 
-  const syncMetadata = useCallback(
-    values => {
-      setMetadata({
-        title: values.title,
-        author: values.author,
-        date: values.date,
-        category: values.category,
-        slug: generateSlugFromTitle(values.title),
-        image: imageTitleData || "",
-        cardImage: "", // Ajouter la logique pour gérer la "cardImage" si nécessaire
-        resume: values.resume,
-        sections: values.sections || [],
-      })
-    },
-    [imageTitleData, setMetadata, generateSlugFromTitle]
-  )
+  // Fonction pour ajouter une nouvelle section à metadata
+  const createNewSection = () => {
+    if (metadata.sections.length < 4) {
+      const newSection = {
+        text: "", // Le texte de la nouvelle section
+        image: "", // L'image de la nouvelle section
+        position: { x: "", y: "" }, // Position de la nouvelle section
+        size: { width: "", height: "" }, // Taille de la nouvelle section
+      }
 
-  useEffect(() => {
-    // Synchronisation des métadonnées avec la dernière version des sections
-    syncMetadata({
-      title: "",
-      author: "",
-      date: "",
-      category: "",
-      slug: "",
-      resume: "",
-      sections: sections.map(section => ({
-        text: section.text || "",
-        image: section.image || "",
-        position: section.position || "",
-        size: section.size || "",
-      })),
-    })
-  }, [sections, syncMetadata])
-
-  const createNewSection = setFieldValue => {
-    if (sections.length >= 4) {
+      // Ajout de la nouvelle section à la fin de sections existantes
+      setMetadata(prevMetadata => ({
+        ...prevMetadata,
+        sections: [...prevMetadata.sections, newSection], // On ajoute simplement la nouvelle section
+      }))
+    } else {
       alert("Vous ne pouvez pas ajouter plus de 4 sections.")
-      return
-    }
-
-    const lastSection = sections[sections.length - 1]
-    if (!lastSection?.text && !lastSection?.image) {
-      alert(
-        "Veuillez ajouter du texte ou une image à la section avant d'ajouter une nouvelle."
-      )
-      return
-    }
-
-    const newSections = [
-      ...sections,
-      {
-        text: "",
-        image: "",
-        position: null,
-        size: null,
-      },
-    ]
-
-    setSections(newSections)
-    setCurrentSectionIndex(prevIndex => prevIndex + 1)
-    setFieldValue("sections", newSections)
-  }
-
-  const goBackToPreviousSection = () => {
-    if (currentSectionIndex > 0) {
-      const updatedSections = [...sections]
-      updatedSections.pop()
-      setSections(updatedSections)
-      setCurrentSectionIndex(prevIndex => prevIndex - 1)
     }
   }
 
+  // Fonction pour supprimer la dernière section
+  const removeLastSection = () => {
+    if (metadata.sections.length > 1) {
+      setMetadata(prevMetadata => {
+        const updatedSections = prevMetadata.sections.slice(0, -1) // Supprime la dernière section
+        return {
+          ...prevMetadata,
+          sections: updatedSections, // On met à jour sections sans la dernière
+        }
+      })
+    }
+  }
+
+  // Sauvegarde des valeurs de l'article
   const save = async values => {
     try {
-      syncMetadata(values)
-      const result = await saveArticle(values, imagesData, imageTitleData)
+      setIsSaving(true)
+      const result = await saveArticle(metadata, imagesData, imageTitleData)
       console.log(result.message)
+      setIsSaving(false)
     } catch (error) {
       console.error(error.message)
+      setIsSaving(false)
     }
   }
 
@@ -125,13 +83,12 @@ const BlogPostCreator = () => {
 
       <Formik
         initialValues={{
-          title: "",
-          author: "",
-          date: "",
-          category: "",
-          slug: "",
-          resume: "",
-          sections: [],
+          title: metadata.title || "",
+          author: metadata.author || "",
+          date: metadata.date || "",
+          category: metadata.category || "",
+          slug: metadata.slug || "",
+          resume: metadata.resume || "",
         }}
         validationSchema={CreateArticleSchema}
         onSubmit={save}
@@ -145,14 +102,16 @@ const BlogPostCreator = () => {
                 placeholder="Titre de l'article"
                 className="form-input"
                 onChange={e => {
-                  setFieldValue("title", e.target.value)
-                  const newSlug = generateSlugFromTitle(e.target.value)
+                  const newTitle = e.target.value
+                  setFieldValue("title", newTitle)
+                  const newSlug = generateSlugFromTitle(newTitle)
                   setFieldValue("slug", newSlug)
-                  syncMetadata({
-                    ...values,
-                    title: e.target.value,
+
+                  setMetadata(prevMetadata => ({
+                    ...prevMetadata,
+                    title: newTitle,
                     slug: newSlug,
-                  })
+                  }))
                 }}
               />
               <ErrorMessage
@@ -167,8 +126,12 @@ const BlogPostCreator = () => {
                 placeholder="Auteur"
                 className="form-input"
                 onChange={e => {
-                  setFieldValue("author", e.target.value)
-                  syncMetadata({ ...values, author: e.target.value })
+                  const newAuthor = e.target.value
+                  setFieldValue("author", newAuthor)
+                  setMetadata(prevMetadata => ({
+                    ...prevMetadata,
+                    author: newAuthor,
+                  }))
                 }}
               />
               <ErrorMessage
@@ -182,8 +145,12 @@ const BlogPostCreator = () => {
                 name="date"
                 className="form-input"
                 onChange={e => {
-                  setFieldValue("date", e.target.value)
-                  syncMetadata({ ...values, date: e.target.value })
+                  const newDate = e.target.value
+                  setFieldValue("date", newDate)
+                  setMetadata(prevMetadata => ({
+                    ...prevMetadata,
+                    date: newDate,
+                  }))
                 }}
               />
               <ErrorMessage
@@ -194,12 +161,7 @@ const BlogPostCreator = () => {
 
               <div className="title-uploader">
                 <h2>Image du titre</h2>
-                <ImageUploader
-                  uploaderType="title"
-                  currentSectionIndex={null}
-                  sections={[]}
-                  setSections={() => {}}
-                />
+                <ImageUploader uploaderType="title" />
               </div>
 
               <Field
@@ -207,8 +169,12 @@ const BlogPostCreator = () => {
                 name="category"
                 className="form-input"
                 onChange={e => {
-                  setFieldValue("category", e.target.value)
-                  syncMetadata({ ...values, category: e.target.value })
+                  const newCategory = e.target.value
+                  setFieldValue("category", newCategory)
+                  setMetadata(prevMetadata => ({
+                    ...prevMetadata,
+                    category: newCategory,
+                  }))
                 }}
               >
                 <option value="">Sélectionnez une catégorie</option>
@@ -243,7 +209,10 @@ const BlogPostCreator = () => {
               value={values.resume}
               onChange={value => {
                 setFieldValue("resume", value)
-                syncMetadata({ ...values, resume: value })
+                setMetadata(prevMetadata => ({
+                  ...prevMetadata,
+                  resume: value,
+                }))
               }}
               className="react-quill"
             />
@@ -254,18 +223,26 @@ const BlogPostCreator = () => {
             />
 
             <div className="section-editor">
-              <h3>Section {currentSectionIndex + 1}</h3>
+              <h3>Section {metadata.sections.length}</h3>
               <ReactQuill
-                value={sections[currentSectionIndex]?.text || ""}
+                theme="snow"
+                value={
+                  metadata.sections[metadata.sections.length - 1]?.text || ""
+                }
                 onChange={value => {
-                  const updatedSections = [...sections]
-                  updatedSections[currentSectionIndex] = {
-                    ...updatedSections[currentSectionIndex],
-                    text: value,
-                  }
-                  setSections(updatedSections)
-                  setFieldValue("sections", updatedSections)
-                  syncMetadata({ ...values, sections: updatedSections })
+                  // Mettre à jour la dernière section
+                  setMetadata(prevMetadata => {
+                    const updatedSections = prevMetadata.sections.map(
+                      (section, index) =>
+                        index === prevMetadata.sections.length - 1
+                          ? { ...section, text: value }
+                          : section
+                    )
+                    return {
+                      ...prevMetadata,
+                      sections: updatedSections,
+                    }
+                  })
                 }}
                 className="react-quill"
               />
@@ -274,45 +251,33 @@ const BlogPostCreator = () => {
                 <h2>Images des sections</h2>
                 <ImageUploader
                   uploaderType="section"
-                  currentSectionIndex={currentSectionIndex}
-                  sections={sections}
-                  setSections={setSections}
+                  currentSectionIndex={metadata.sections.length - 1}
                 />
                 <SizeControl />
               </div>
-              <div>{sections[currentSectionIndex]?.text}</div>
 
               <div className="section-actions">
                 <button
                   type="button"
-                  onClick={() => createNewSection(setFieldValue)}
+                  onClick={createNewSection}
                   className="btn btn-add-section"
-                  disabled={sections.length >= 4}
-                  style={{
-                    cursor: sections.length >= 4 ? "not-allowed" : "pointer",
-                    opacity: sections.length >= 4 ? 0.6 : 1,
-                  }}
+                  disabled={metadata.sections.length > 3}
                 >
-                  Créer une nouvelle section
+                  Ajouter une nouvelle section
                 </button>
-
                 <button
                   type="button"
-                  onClick={goBackToPreviousSection}
-                  className="btn btn-prev-section"
-                  disabled={sections.length <= 1}
-                  style={{
-                    cursor: sections.length <= 1 ? "not-allowed" : "pointer",
-                    opacity: sections.length <= 1 ? 0.6 : 1,
-                  }}
+                  onClick={removeLastSection}
+                  className="btn btn-remove-section"
+                  disabled={metadata.sections.length <= 1}
                 >
-                  Retour à la section précédente
+                  Supprimer la dernière section
                 </button>
               </div>
             </div>
 
             <button type="submit" className="btn btn-submit">
-              Sauvegarder l'article
+              {isSaving ? "Sauvegarde en cours..." : "Sauvegarder l'article"}
             </button>
           </Form>
         )}

@@ -62,13 +62,13 @@ const ArticlePreview = () => {
     )
   }
 
-  // Effet pour écouter les changements dans imagesPreview et forcer la mise à jour
-  useEffect(() => {
-    if (imagesPreview && imagesPreview.length > 0) {
-      // Si imagesPreview est disponible et contient des données, on déclenche une mise à jour
-      console.log("Mise à jour des images preview:", imagesPreview)
-    }
-  }, [imagesPreview]) // L'effet sera déclenché chaque fois que imagesPreview changera
+  // // Effet pour écouter les changements dans imagesPreview et forcer la mise à jour
+  // useEffect(() => {
+  //   if (imagesPreview && imagesPreview.length > 0) {
+  //     // Si imagesPreview est disponible et contient des données, on déclenche une mise à jour
+  //     console.log("Mise à jour des images preview:", imagesPreview)
+  //   }
+  // }, [imagesPreview]) // L'effet sera déclenché chaque fois que imagesPreview changera
 
   return (
     <div className="article-preview">
