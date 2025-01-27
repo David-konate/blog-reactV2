@@ -40,6 +40,7 @@ const ArticlePreview = () => {
             objectFit: "cover", // Maintenir le ratio sans déformation
             borderRadius: "8px",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            marginRight: "0.5rem",
           }}
         />
       </div>

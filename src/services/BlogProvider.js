@@ -153,38 +153,54 @@ export const BlogProvider = ({ children }) => {
 
   // Générer le contenu Markdown
   const generateMarkdown = metadata => {
+    // Générer la section "metadata" en haut du fichier
     const metadataString = `---
-title: "${metadata.title}"
-author: "${metadata.author}"
-date: "${metadata.date}"
-category: "${metadata.category || ""}"
-resume: "${metadata.resume || ""}"
-slug: "${metadata.slug || ""}"
-image: "${metadata.image || ""}"
-cardImage: "${metadata.cardImage || ""}"
-sections:
-${metadata.sections
-  .map(
-    (section, index) => `  - text: "${section.text || ""}"
-  index: ${index}
-  image: "${section.image || ""}"
-  imageHeight: ${section.imageHeight || "null"}
-  imageWidth: ${section.imageWidth || "null"}
-  imagePosition: "${section.imagePosition || "top"}"`
-  )
-  .join("\n")}
----`
+  title: "${metadata.title}"
+  author: "${metadata.author}"
+  date: "${metadata.date}"
+  category: "${metadata.category || ""}"
+  resume: "${metadata.resume || ""}"
+  slug: "${metadata.slug || ""}"
+  image: "${metadata.image || ""}"
+  cardImage: "${metadata.cardImage || ""}"
+  sections:
+  ${metadata.sections
+    .map(
+      (section, index) => `  - text: "${section.text || ""}"
+      index: ${index}
+      image: "${section.image || ""}"
+      position: { x: ${section.position?.x || "null"}, y: ${
+        section.position?.y || "null"
+      } }
+      size: { width: ${section.size?.width || "100%"}, height: ${
+        section.size?.height || "null"
+      } }`
+    )
+    .join("\n")}
+  ---`
 
+    // Générer le contenu détaillé des sections
     const sectionsContent = metadata.sections
       .map((section, index) => {
         const imageName = section.image || ""
-        return `### Section ${index + 1}
-        
-${imageName ? `![Image de la section](${imageName})` : ""}
-${section.text || ""}`
-      })
-      .join("\n")
+        const imageDetails =
+          section.image && section.position && section.size
+            ? `\n* Position : (${section.position.x || "null"}, ${
+                section.position.y || "null"
+              })\n* Dimensions : ${section.size.width || "null"}x${
+                section.size.height || "null"
+              }`
+            : ""
 
+        return `### Section ${index + 1}
+  
+  ${imageName ? `![Image de la section](${imageName})` : ""}
+  ${imageDetails}
+  ${section.text || ""}`
+      })
+      .join("\n\n")
+
+    // Retourner le contenu Markdown complet
     return `${metadataString}\n\n${sectionsContent}`
   }
 

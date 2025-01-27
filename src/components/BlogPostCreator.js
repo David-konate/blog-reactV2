@@ -33,6 +33,17 @@ const BlogPostCreator = () => {
 
   // Fonction pour ajouter une nouvelle section à metadata
   const createNewSection = () => {
+    // Vérifier si la section actuelle a au moins un texte ou une image
+    const currentSection = metadata.sections[metadata.sections.length - 1]
+    const hasContent = currentSection?.text.trim() || currentSection?.image
+
+    if (!hasContent) {
+      alert(
+        "Veuillez ajouter au moins un texte ou une image dans la section actuelle avant d'en créer une nouvelle."
+      )
+      return // Bloque l'ajout de la nouvelle section
+    }
+
     if (metadata.sections.length < 4) {
       const newSection = {
         text: "", // Le texte de la nouvelle section
@@ -65,16 +76,17 @@ const BlogPostCreator = () => {
   }
 
   // Sauvegarde des valeurs de l'article
-  const save = async values => {
-    try {
-      setIsSaving(true)
-      const result = await saveArticle(metadata, imagesData, imageTitleData)
-      console.log(result.message)
-      setIsSaving(false)
-    } catch (error) {
-      console.error(error.message)
-      setIsSaving(false)
-    }
+  const save = async metadata => {
+    console.log({ metadata })
+    // try {
+    //   setIsSaving(true)
+    //   const result = await saveArticle(metadata, imagesData, imageTitleData)
+    //   console.log(result.message)
+    //   setIsSaving(false)
+    // } catch (error) {
+    //   console.error(error.message)
+    //   setIsSaving(false)
+    // }
   }
 
   return (

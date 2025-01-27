@@ -575,6 +575,9 @@ btn btn-add-section
   transition: background-color 0.3s; /* Transition pour le hover */
 }
 
+
+
+
 /* Hover pour le bouton */
 .btn:hover {
   background-color: #45a049; /* Légère modification de la couleur au survol */
@@ -612,7 +615,10 @@ btn btn-add-section
   padding-top: 20px;
   position: relative;
   z-index: 0;
+  overflow: auto; /* Permet de gérer les flottants correctement */
+
 }
+
 
 .article-preview-section img {
   position: relative; /* Permet d'appliquer left/top */
