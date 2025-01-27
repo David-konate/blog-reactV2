@@ -3,8 +3,6 @@ import { useBlogContext } from "../services/BlogProvider" // Import du contexte 
 
 const ImageUploader = ({
   uploaderType, // "title" ou "section"
-  sections,
-  setSections,
 }) => {
   const [loadingTitle, setLoadingTitle] = useState(false)
   const [loadingSection, setLoadingSection] = useState(false)
@@ -20,6 +18,8 @@ const ImageUploader = ({
     setImageTitlePreview,
     currentSectionIndex,
     imagesPreview,
+    metadata, // Récupérer metadata directement depuis le contexte
+    setMetadata, // Fonction pour mettre à jour metadata
   } = useBlogContext()
 
   // Fonction pour uploader une image de titre
@@ -71,14 +71,19 @@ const ImageUploader = ({
             size: { width: "100%", height: "auto" }, // Taille basée sur l'image
           }
 
-          // Mettre à jour la section spécifique dans le store
-          setSections(prevSections => {
-            const updatedSections = [...prevSections]
+          // Mettre à jour la section spécifique dans metadata.sections
+          setMetadata(prevMetadata => {
+            const updatedSections = [...prevMetadata.sections]
             updatedSections[currentSectionIndex] = {
-              ...updatedSections[currentSectionIndex],
-              size: imageData.size,
+              ...updatedSections[currentSectionIndex], // Garde le texte et les autres données de la section
+              image: imageData.url, // Ajoute l'image dans la section
+              size: imageData.size, // Ajoute la taille de l'image
             }
-            return updatedSections
+
+            return {
+              ...prevMetadata,
+              sections: updatedSections, // Mettre à jour les sections avec la nouvelle image
+            }
           })
 
           // Mettre à jour les données d'images dans le contexte global
