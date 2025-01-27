@@ -28,8 +28,6 @@ const BlogPostCreator = () => {
     setMetadata,
   } = useBlogContext()
 
-  const [isSaving, setIsSaving] = useState(false)
-
   const generateSlugFromTitle = useCallback(title => {
     return title
       .toLowerCase()
@@ -45,20 +43,33 @@ const BlogPostCreator = () => {
         author: values.author,
         date: values.date,
         category: values.category,
-        slug: generateSlugFromTitle(values.title), // Générer un slug basé sur le titre
-        image: imageTitleData || "", // Image du titre
+        slug: generateSlugFromTitle(values.title),
+        image: imageTitleData || "",
         cardImage: "", // Ajouter la logique pour gérer la "cardImage" si nécessaire
         resume: values.resume,
-        sections: sections.map(section => ({
-          text: section.text || "", // S'assurer que 'text' est défini
-          image: section.image || "", // S'assurer que 'image' est défini
-          position: section.position || "", // S'assurer que 'position' est défini
-          size: section.size || "", // S'assurer que 'size' est défini
-        })),
+        sections: values.sections || [],
       })
     },
-    [imageTitleData, setMetadata, sections, generateSlugFromTitle]
+    [imageTitleData, setMetadata, generateSlugFromTitle]
   )
+
+  useEffect(() => {
+    // Synchronisation des métadonnées avec la dernière version des sections
+    syncMetadata({
+      title: "",
+      author: "",
+      date: "",
+      category: "",
+      slug: "",
+      resume: "",
+      sections: sections.map(section => ({
+        text: section.text || "",
+        image: section.image || "",
+        position: section.position || "",
+        size: section.size || "",
+      })),
+    })
+  }, [sections, syncMetadata])
 
   const createNewSection = setFieldValue => {
     if (sections.length >= 4) {
@@ -100,13 +111,10 @@ const BlogPostCreator = () => {
 
   const save = async values => {
     try {
-      setIsSaving(true) // Set isSaving to true when saving begins
-      syncMetadata(values) // Synchronize with metadata
+      syncMetadata(values)
       const result = await saveArticle(values, imagesData, imageTitleData)
       console.log(result.message)
-      setIsSaving(false) // Set isSaving to false after the article is saved
     } catch (error) {
-      setIsSaving(false) // Set isSaving to false if an error occurs
       console.error(error.message)
     }
   }
@@ -248,7 +256,7 @@ const BlogPostCreator = () => {
             <div className="section-editor">
               <h3>Section {currentSectionIndex + 1}</h3>
               <ReactQuill
-                value={sections[currentSectionIndex]?.text || ""} // Affiche une chaîne vide si pas de texte
+                value={sections[currentSectionIndex]?.text || ""}
                 onChange={value => {
                   const updatedSections = [...sections]
                   updatedSections[currentSectionIndex] = {
@@ -270,16 +278,16 @@ const BlogPostCreator = () => {
                   sections={sections}
                   setSections={setSections}
                 />
-                {/* Contrôles pour la position et la taille */}
                 <SizeControl />
               </div>
-              <br />
+              <div>{sections[currentSectionIndex]?.text}</div>
+
               <div className="section-actions">
                 <button
                   type="button"
                   onClick={() => createNewSection(setFieldValue)}
                   className="btn btn-add-section"
-                  disabled={sections.length >= 4} // Désactive le bouton si sections.length >= 4
+                  disabled={sections.length >= 4}
                   style={{
                     cursor: sections.length >= 4 ? "not-allowed" : "pointer",
                     opacity: sections.length >= 4 ? 0.6 : 1,
@@ -292,7 +300,7 @@ const BlogPostCreator = () => {
                   type="button"
                   onClick={goBackToPreviousSection}
                   className="btn btn-prev-section"
-                  disabled={sections.length <= 1} // Désactive le bouton si sections.length <= 1
+                  disabled={sections.length <= 1}
                   style={{
                     cursor: sections.length <= 1 ? "not-allowed" : "pointer",
                     opacity: sections.length <= 1 ? 0.6 : 1,

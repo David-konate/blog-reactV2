@@ -6,7 +6,7 @@ const ArticlePreview = () => {
   const { metadata, imageTitlePreview, imagesPreview, currentSectionIndex } =
     useBlogContext()
 
-  console.log({ imagesPreview })
+  console.log({ metadata })
 
   const renderImage = (src, alt, width = "100%", index) => {
     const isValidImage =

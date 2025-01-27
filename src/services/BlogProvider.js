@@ -18,14 +18,7 @@ export const BlogProvider = ({ children }) => {
     image: "",
     cardImage: "",
     resume: "",
-    sections: [
-      {
-        text: "", // Le texte de la section
-        image: "", // L'image de la section
-        position: { x: "", y: "" },
-        size: { width: "", height: "" },
-      },
-    ],
+    sections: [],
   })
 
   const [currentSectionIndex, setCurrentSectionIndex] = useState(0)
